@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    New Fictions
+{% endblock %}
+
+{% block body %}
+    <h1> New Fictions </h1>
+
+    <div id="fiction-list">
+        {% for fiction in fictions %}
+            <div class="fiction-list-item">
+                <h2> {{ fiction.title }} </h2>
+                <p> {{ fiction.description }} </p>
+                <button> Not interested </button>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

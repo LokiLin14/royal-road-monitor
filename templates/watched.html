@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Following
+{% endblock %}
+
+{% block body %}
+    <h1> Following </h1>
+
+    <div id="filters">
+        <p> Some sort of slider to filter by minimum page count </p>
+    </div>
+
+    <div id="fiction-list">
+        {% for fiction in fictions %}
+            <div class="fiction-list-item">
+                <h2> {{ fiction.title }} </h2>
+                <p> {{ fiction.description }} </p>
+                <button> Unfollow </button>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
