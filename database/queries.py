@@ -26,7 +26,7 @@ def interested_fictions(amt : int) -> List[FictionSnapshot]:
     ).filter(
         subquery.c.rn == 1
     ).order_by(
-        subquery.c.snapshot_time.desc()
+        subquery.c.from_ranking.asc()
     ).limit(amt).all())
     return fictions
 

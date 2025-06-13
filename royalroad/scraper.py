@@ -26,7 +26,7 @@ def snapshot_fiction(fiction : Tag, snapshot_time : datetime, from_url : str, ra
             url = baseurl + fiction.find('h2', class_='fiction-title').find('a')['href'],
             cover_url = fiction.find('img')['src'],
             title = fiction.find('h2', class_='fiction-title').text.strip(),
-            description = fiction.find('div', id=re.compile('^description-')).text.replace('\n', ' ').strip(),
+            description = '\n\n'.join([x.text for x in fiction.find('div', id=re.compile('^description-')).find_all('p')]),
             tags = ','.join([x.text for x in fiction.find_all('a', class_="fiction-tag")]),
             pages = parseSpanToInt('Pages', stats),
             chapters = parseSpanToInt('Chapters', stats),

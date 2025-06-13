@@ -10,10 +10,11 @@
     <div id="fiction-list">
         {% for fiction in fictions %}
             <div class="fiction-list-item">
-                <a href="{{ fiction.url }}">
-                    <h2> {{ fiction.title }} </h2>
-                </a>
-                <p> {{ fiction.description }} </p>
+                <a href="{{ fiction.url }}"><h2> {{ fiction.title }} </h2></a>
+                <img src="{{ fiction.cover_url }}" alt="fiction cover image">
+                {% for paragraph in fiction.description_paragraphs() %}
+                    <p> {{ paragraph }} </p>
+                {% endfor %}
                 <button> Not interested </button>
             </div>
         {% endfor %}
