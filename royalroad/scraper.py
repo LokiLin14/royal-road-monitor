@@ -3,6 +3,7 @@ import re
 import sys
 from datetime import datetime
 from typing import List
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -18,9 +19,11 @@ def snapshot_fiction(fiction : Tag, snapshot_time : datetime, from_url : str, ra
         stats = fiction.find('div', class_="stats")
         followers = parseSpanToInt('Followers', stats)
         views = parseSpanToInt('Views', stats)
+        parsed = urlparse(from_url)
+        baseurl = f"{parsed.scheme}://{parsed.netloc}"
         return FictionSnapshot(
             snapshot_time = snapshot_time,
-            url = fiction.find('h2', class_='fiction-title').find('a')['href'],
+            url = baseurl + fiction.find('h2', class_='fiction-title').find('a')['href'],
             cover_url = fiction.find('img')['src'],
             title = fiction.find('h2', class_='fiction-title').text.strip(),
             description = fiction.find('div', id=re.compile('^description-')).text.replace('\n', ' ').strip(),

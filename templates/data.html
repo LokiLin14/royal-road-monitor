@@ -23,4 +23,8 @@
         <p> Some sort of box to display logged messages from the data scraper</p>
     </div>
 
+    <form action="{{ url_for('fetch_data') }}" method="post">
+        <button type="submit">Fetch rising stars right now</button>
+    </form>
+
 {% endblock %}

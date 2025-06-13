@@ -33,7 +33,7 @@ class FictionSnapshot(Base):
         return '<FictionSnapshot title=%r, snapshot_time=%r>' % (self.title, self.snapshot_time)
 
 class ViewedFiction(Base):
-    __tablename__ = 'not_interested_fictions'
+    __tablename__ = 'viewed_fictions'
     url = Column(String, primary_key=True)
     marked_time = Column(DateTime, primary_key=True)
     interested = Column(Boolean, primary_key=False)

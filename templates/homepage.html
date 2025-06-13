@@ -10,7 +10,9 @@
     <div id="fiction-list">
         {% for fiction in fictions %}
             <div class="fiction-list-item">
-                <h2> {{ fiction.title }} </h2>
+                <a href="{{ fiction.url }}">
+                    <h2> {{ fiction.title }} </h2>
+                </a>
                 <p> {{ fiction.description }} </p>
                 <button> Not interested </button>
             </div>
