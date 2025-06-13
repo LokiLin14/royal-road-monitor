@@ -7,7 +7,7 @@ from sqlalchemy.orm import aliased
 from database import db_session, init_db
 from royalroad.models import FictionSnapshot, ViewedFiction
 
-def interested_fictions(amt : int) -> List[FictionSnapshot]:
+def unviewed_fictions(max_entries_returned : int) -> List[FictionSnapshot]:
     # Get interested fictions
     subquery = db_session.query(
         FictionSnapshot,
@@ -27,7 +27,32 @@ def interested_fictions(amt : int) -> List[FictionSnapshot]:
         subquery.c.rn == 1
     ).order_by(
         subquery.c.from_ranking.asc()
-    ).limit(amt).all())
+    ).limit(max_entries_returned).all())
+    return fictions
+
+def followed_fictions(max_entries_returned : int) -> List[FictionSnapshot]:
+    subquery = db_session.query(
+        FictionSnapshot,
+        func.row_number().over(
+            partition_by=FictionSnapshot.url,
+            order_by=FictionSnapshot.snapshot_time.desc()
+        ).label('rn')
+    ).filter(
+        FictionSnapshot.url.in_(
+            db_session.query(
+                ViewedFiction.url
+            ).filter(
+                ViewedFiction.interested.is_(True),
+            )
+        )
+    ).subquery()
+    fictions = db_session.query(
+        aliased(FictionSnapshot, subquery)
+    ).filter(
+        subquery.c.rn == 1
+    ).order_by(
+        subquery.c.from_ranking.asc()
+    ).limit(max_entries_returned).all()
     return fictions
 
 def add_data():
@@ -58,5 +83,5 @@ def add_data():
 if __name__ == '__main__':
     init_db()
 
-    fictions = interested_fictions(20)
+    fictions = unviewed_fictions(20)
     print(fictions)

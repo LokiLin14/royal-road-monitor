@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from "macros/fiction_render.html" import display_fiction %}
 
 {% block title %}
     New Fictions
@@ -10,13 +11,58 @@
     <div id="fiction-list">
         {% for fiction in fictions %}
             <div class="fiction-list-item">
-                <a href="{{ fiction.url }}"><h2> {{ fiction.title }} </h2></a>
-                <img src="{{ fiction.cover_url }}" alt="fiction cover image">
-                {% for paragraph in fiction.description_paragraphs() %}
-                    <p> {{ paragraph }} </p>
-                {% endfor %}
-                <button> Not interested </button>
+                {{ display_fiction(fiction) }}
+                <button class="follow-fiction">Follow</button>
+                <button class="discard-fiction">Not interested</button>
             </div>
         {% endfor %}
     </div>
+
+    <script>
+        async function view_fiction(fiction_url, interested) {
+            try {
+                const form_data = new FormData();
+                form_data.append('url', fiction_url);
+                form_data.append('interested', interested);
+                const response = await fetch('{{ url_for('view') }}', {
+                    method: 'POST',
+                    body: form_data
+                });
+                if (!response.ok) {
+                    const resp_data = await response.json()
+                    console.log('Request failed:', resp_data.message);
+                }
+                return response.ok;
+            } catch (error) {
+                console.error('Request failed:', error);
+                return false;
+            }
+        }
+
+        // Add event listeners to follow buttons
+        const followButtons = document.querySelectorAll('.follow-fiction');
+        followButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const fictionItem = this.closest('.fiction-list-item');
+                const link = fictionItem.querySelector('a').href;
+                const success = await view_fiction(link, true);
+                if (success) {
+                    fictionItem.style.display = 'None';
+                }
+            });
+        });
+
+        // Add event listeners to discard buttons
+        const discardButtons = document.querySelectorAll('.discard-fiction');
+        discardButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const fictionItem = this.closest('.fiction-list-item');
+                const link = fictionItem.querySelector('a').href;
+                const success = await view_fiction(link, false);
+                if (success) {
+                    fictionItem.style.display = 'None';
+                }
+            });
+        });
+    </script>
 {% endblock %}

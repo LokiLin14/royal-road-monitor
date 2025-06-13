@@ -1,0 +1,7 @@
+{% macro display_fiction(fiction) %}
+    <a href="{{ fiction.url }}"><h2> {{ fiction.title }}</h2></a>
+    <img src="{{ fiction.cover_url }}" alt="fiction cover image">
+    {% for paragraph in fiction.description_paragraphs() %}
+        <p> {{ paragraph }} </p>
+    {% endfor %}
+{% endmacro %}
