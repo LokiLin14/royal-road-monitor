@@ -1,4 +1,4 @@
-{% macro display_fiction(fiction) %}
+{% macro display_fiction(fiction, display_follow=false, display_not_interested=false) %}
 <div class="fiction-list-item">
     <img src="{{ fiction.cover_url }}" alt="fiction cover image">
 
@@ -12,8 +12,22 @@
         {% endfor %}
 
         <div class="fiction-actions">
-            {{ caller() }}
+            {% if display_follow %}
+                <button class="follow-fiction">Follow</button>
+            {% endif %}
+            {% if display_not_interested %}
+                <button class="discard-fiction">Not interested</button>
+            {% endif %}
         </div>
     </div>
 </div>
+{% endmacro %}
+
+{% macro display_fictions(fictions, display_follow=false, display_not_interested=false) %}
+    <div class="fiction-list">
+    {% for fiction in fictions %}
+        {{ display_fiction(fiction, display_follow, display_not_interested) }}
+    {% endfor %}
+    </div>
+    <script src="{{ url_for('static', filename='fiction-buttons.js') }}"></script>
 {% endmacro %}

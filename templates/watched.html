@@ -1,21 +1,17 @@
 {% extends 'base.html' %}
-{% from "macros/fiction_render.html" import display_fiction %}
+{% from "macros/fiction_render.html" import display_fictions %}
 
 {% block title %}
     Following
 {% endblock %}
 
 {% block body %}
-    <link rel="stylesheet" href="{{  url_for('static', filename='fiction-card.css')}}">
-    <div class="fiction-list">
-        <h1> Following </h1>
+    <div class="fiction-display-heading">
+        <h1>Following</h1>
         <div id="filters">
             <p> Some sort of slider to filter by minimum page count </p>
         </div>
-        {% for fiction in fictions %}
-            {% call display_fiction(fiction) %}
-                <button class="discard-fiction"> Unfollow </button>
-            {% endcall %}
-        {% endfor %}
     </div>
+
+    {{ display_fictions(fictions, display_follow=false, display_not_interested=true) }}
 {% endblock %}

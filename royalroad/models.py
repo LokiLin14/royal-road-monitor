@@ -49,3 +49,15 @@ class ViewedFiction(Base):
     def __repr__(self) -> str:
         return '<NotInterestedInFiction url=%r, marked_time=%r, interested=%r>' % (self.url, self.marked_time,
                                                                                    self.interested)
+
+class WatchedURL(Base):
+    __tablename__ = 'watched_urls'
+    url = Column(String, primary_key=True)
+    alive = Column(Boolean, primary_key=False)
+    alias = Column(String, primary_key=False)
+    def __init__(self, url, alive, alias):
+        self.url = url
+        self.alive = alive
+        self.alias = alias
+    def __repr__(self) -> str:
+        return '<WatchedURL url=%r, alive=%r, alias=%r>' % (self.url, self.alive, self.alias)

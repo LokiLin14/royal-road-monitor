@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from flask import Flask, render_template, redirect, url_for, request, jsonify, make_response
-from wtforms import Form, BooleanField, StringField, PasswordField, validators
+from flask import Flask, render_template, redirect, url_for, request, make_response, send_from_directory
+from wtforms import Form, BooleanField, StringField, validators
 
 from database import db_session, init_db
-from database.queries import unviewed_fictions, followed_fictions
+from database.queries import unviewed_fictions, followed_fictions, watched_urls
 from royalroad.models import ViewedFiction
 from royalroad.scraper import snapshot_url
 
@@ -17,13 +17,13 @@ number_of_entries_per_page = 20
 @app.route("/")
 def new():
     fictions = unviewed_fictions(number_of_entries_per_page)
-    return render_template('homepage.html', fictions=fictions)
+    from_urls = watched_urls()
+    return render_template('homepage.html', fictions=fictions, from_urls=from_urls)
 
 @app.route("/watched")
 def watched():
     fictions = followed_fictions(number_of_entries_per_page)
     return render_template('watched.html', fictions=fictions)
-
 @app.route("/data")
 def data():
     return render_template('data.html')

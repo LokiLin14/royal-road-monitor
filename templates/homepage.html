@@ -1,67 +1,26 @@
 {% extends 'base.html' %}
-{% from "macros/fiction_render.html" import display_fiction %}
+{% from "macros/fiction_render.html" import display_fictions %}
 
 {% block title %}
     New Fictions
 {% endblock %}
 
 {% block body %}
-    <link rel="stylesheet" href="{{  url_for('static', filename='fiction-card.css')}}">
-    <div class="fiction-list">
-        <h1> New Fictions </h1>
-        {% for fiction in fictions %}
-            {% call display_fiction(fiction) %}
-                <button class="follow-fiction">Follow</button>
-                <button class="discard-fiction">Not interested</button>
-            {% endcall %}
-        {% endfor %}
+    <div class="fiction-display-heading">
+        <h1>New Fictions</h1>
+
+        <form>
+            <label for="from_url">
+                <select>
+                    {% for from_url in from_urls %}
+                        <option value="{{ from_url.url }}">{{ from_url.alias }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button type="submit">Go</button>
+        </form>
     </div>
 
-    <script>
-        async function view_fiction(fiction_url, interested) {
-            try {
-                const form_data = new FormData();
-                form_data.append('url', fiction_url);
-                form_data.append('interested', interested);
-                const response = await fetch('{{ url_for('view') }}', {
-                    method: 'POST',
-                    body: form_data
-                });
-                if (!response.ok) {
-                    const resp_data = await response.json()
-                    console.log('Request failed:', resp_data.message);
-                }
-                return response.ok;
-            } catch (error) {
-                console.error('Request failed:', error);
-                return false;
-            }
-        }
+    {{ display_fictions(fictions, display_follow=true, display_not_interested=true) }}
 
-        // Add event listeners to follow buttons
-        const followButtons = document.querySelectorAll('.follow-fiction');
-        followButtons.forEach(button => {
-            button.addEventListener('click', async function() {
-                const fictionItem = this.closest('.fiction-list-item');
-                const link = fictionItem.querySelector('a').href;
-                const success = await view_fiction(link, true);
-                if (success) {
-                    fictionItem.style.display = 'None';
-                }
-            });
-        });
-
-        // Add event listeners to discard buttons
-        const discardButtons = document.querySelectorAll('.discard-fiction');
-        discardButtons.forEach(button => {
-            button.addEventListener('click', async function() {
-                const fictionItem = this.closest('.fiction-list-item');
-                const link = fictionItem.querySelector('a').href;
-                const success = await view_fiction(link, false);
-                if (success) {
-                    fictionItem.style.display = 'None';
-                }
-            });
-        });
-    </script>
 {% endblock %}

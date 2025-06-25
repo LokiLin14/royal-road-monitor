@@ -1,11 +1,13 @@
 from datetime import datetime
+from logging.handlers import WatchedFileHandler
 from typing import List
 
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
 
 from database import db_session, init_db
-from royalroad.models import FictionSnapshot, ViewedFiction
+from royalroad.models import FictionSnapshot, ViewedFiction, WatchedURL
+
 
 def unviewed_fictions(max_entries_returned : int) -> List[FictionSnapshot]:
     # Get interested fictions
@@ -79,6 +81,10 @@ def add_data():
     db_session.add(not_interested)
     db_session.commit()
     pass
+
+def watched_urls() -> List[WatchedURL]:
+    return [WatchedURL('', False, 'Rising Stars')]
+    return []
 
 if __name__ == '__main__':
     init_db()
