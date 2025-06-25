@@ -9,14 +9,14 @@
     <div class="fiction-display-heading">
         <h1>New Fictions</h1>
 
-        <form>
-            <label for="from_url">
-                <select>
-                    {% for from_url in from_urls %}
-                        <option value="{{ from_url.url }}">{{ from_url.alias }}</option>
-                    {% endfor %}
-                </select>
-            </label>
+        <form action="{{ url_for('new') }}" method="get">
+            <label for="url"></label>
+            <select id="url" name="url">
+                {% for from_url in from_urls %}
+                    <option value="{{ from_url.url }}">{{ from_url.alias }}</option>
+                {% endfor %}
+            </select>
+
             <button type="submit">Go</button>
         </form>
     </div>

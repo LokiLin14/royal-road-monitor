@@ -16,8 +16,14 @@ number_of_entries_per_page = 20
 
 @app.route("/")
 def new():
-    fictions = unviewed_fictions(number_of_entries_per_page)
     from_urls = watched_urls()
+    if len(from_urls) == 0:
+        default_url = ""
+    else:
+        default_url = from_urls[0].url
+    page_url = request.args.get('url', default_url)
+    print(page_url)
+    fictions = unviewed_fictions(number_of_entries_per_page, from_url=page_url)
     return render_template('homepage.html', fictions=fictions, from_urls=from_urls)
 
 @app.route("/watched")
@@ -26,7 +32,7 @@ def watched():
     return render_template('watched.html', fictions=fictions)
 @app.route("/data")
 def data():
-    return render_template('data.html')
+    return render_template('data.html', watched_urls=watched_urls())
 
 @app.route("/fetch_data", methods=['POST'])
 def fetch_data():

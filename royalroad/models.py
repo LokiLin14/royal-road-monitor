@@ -53,11 +53,11 @@ class ViewedFiction(Base):
 class WatchedURL(Base):
     __tablename__ = 'watched_urls'
     url = Column(String, primary_key=True)
-    alive = Column(Boolean, primary_key=False)
+    active = Column(Boolean, primary_key=False)
     alias = Column(String, primary_key=False)
-    def __init__(self, url, alive, alias):
+    def __init__(self, url, active, alias):
         self.url = url
-        self.alive = alive
+        self.active = active
         self.alias = alias
     def __repr__(self) -> str:
-        return '<WatchedURL url=%r, alive=%r, alias=%r>' % (self.url, self.alive, self.alias)
+        return '<WatchedURL url=%r, alive=%r, alias=%r>' % (self.url, self.active, self.alias)

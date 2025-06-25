@@ -27,4 +27,26 @@
         <button type="submit">Fetch rising stars right now</button>
     </form>
 
+    <div class="watched-pages-div">
+        {% for watched_url in watched_urls %}
+            <form>
+                <label for="from_url">URL</label>
+                <input type="text" id="from_url" value="{{ watched_url.url }}" readonly>
+                <br>
+
+                <label for="alias">Alias</label>
+                <input type="text" id="alias" value="{{ watched_url.alias }}">
+                <br>
+
+                <label for="active">Active</label>
+                <input type="checkbox" id="active" value="True" {% if watched_url.active %}checked{% endif %}>
+                <br>
+
+                <button type="submit">Update</button>
+
+                <button type="submit">Delete</button>
+            </form>
+        {% endfor %}
+    </div>
+
 {% endblock %}

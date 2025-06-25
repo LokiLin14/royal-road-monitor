@@ -9,19 +9,21 @@ from database import db_session, init_db
 from royalroad.models import FictionSnapshot, ViewedFiction, WatchedURL
 
 
-def unviewed_fictions(max_entries_returned : int) -> List[FictionSnapshot]:
+def unviewed_fictions(max_entries_returned : int, from_url="") -> List[FictionSnapshot]:
     # Get interested fictions
-    subquery = db_session.query(
+    subquery = (db_session.query(
         FictionSnapshot,
         func.row_number().over(
             partition_by=FictionSnapshot.url,
             order_by=FictionSnapshot.snapshot_time.desc()
         ).label('rn')
     ).filter(
+        FictionSnapshot.from_url == from_url
+    ).filter(
         FictionSnapshot.url.not_in(
             db_session.query(ViewedFiction.url)
         )
-    ).subquery()
+    ).subquery())
     # Get the latest snapshot entry
     fictions = (db_session.query(
         aliased(FictionSnapshot, subquery)
@@ -83,8 +85,7 @@ def add_data():
     pass
 
 def watched_urls() -> List[WatchedURL]:
-    return [WatchedURL('', False, 'Rising Stars')]
-    return []
+    return [WatchedURL('https://www.royalroad.com/fictions/rising-stars', False, 'Rising Stars')]
 
 if __name__ == '__main__':
     init_db()
