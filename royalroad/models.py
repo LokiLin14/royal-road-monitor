@@ -1,4 +1,6 @@
 # A FictionSnapshot is the state of a fiction at a specific point in time.
+from typing import List
+
 from database import Base
 from sqlalchemy import Column, DateTime, String, Float, Integer, Boolean
 
@@ -16,7 +18,7 @@ class FictionSnapshot(Base):
     from_url = Column(String, primary_key=True)
     from_ranking = Column(Integer, primary_key=False)
 
-    def __init__(self, snapshot_time, url, cover_url, title, description, tags, pages, chapters, rating, from_url, from_ranking):
+    def __init__(self, snapshot_time, url, cover_url, title, description, tags : List[str], pages, chapters, rating, from_url, from_ranking):
         self.snapshot_time = snapshot_time
         self.url = url
         self.cover_url = cover_url
