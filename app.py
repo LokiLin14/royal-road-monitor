@@ -22,7 +22,6 @@ def new():
     else:
         default_url = from_urls[0].url
     page_url = request.args.get('url', default_url)
-    print(page_url)
     fictions = unviewed_fictions(number_of_entries_per_page, from_url=page_url)
     return render_template('homepage.html', fictions=fictions, from_urls=from_urls)
 
@@ -41,6 +40,25 @@ def fetch_data():
     for snapshot in snapshots:
         db_session.add(snapshot)
     db_session.commit()
+    return redirect(url_for('data'))
+
+class WatchedURLForm(Form):
+    url = StringField('url', validators=[validators.DataRequired()])
+    alias = StringField('alias', validators=[validators.DataRequired()])
+    active = BooleanField('active')
+
+@app.route('/api/update_watched_url', methods=['POST'])
+def update_watched_url():
+    form = WatchedURLForm(request.form)
+    if not form.validate():
+        return make_response({'message': form.errors}, 400)
+    return redirect(url_for('data'))
+
+@app.route('/api/create_watched_url', methods=['POST'])
+def create_watched_url():
+    form = WatchedURLForm(request.form)
+    if not form.validate():
+        return make_response({'message': form.errors}, 400)
     return redirect(url_for('data'))
 
 class ViewFictionForm(Form):

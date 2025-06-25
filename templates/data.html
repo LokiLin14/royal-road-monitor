@@ -4,49 +4,76 @@
     Data Collection
 {% endblock %}
 
+{% macro watched_url_data_entry(url_value, alias_value, active_value, form_endpoint="", editable_url=True, hidden=False) %}
+<div class="watched-page-card {% if hidden %}hidden-item{% endif %}"><form action="{{ form_endpoint }}" method="post">
+    <div class="form-group">
+        <label for="URL">URL</label>
+        <input type="text" id="URL" name="url" value="{{ url_value }}" {% if not editable_url %} readonly {% endif %}>
+    </div>
+    <div class="form-group">
+        <label for="ALIAS">Alias</label>
+        <input type="text" id="ALIAS" name="alias" value="{{ alias_value }}">
+    </div>
+    <div class="checkbox-group">
+        <label for="ACTIVE">Active</label>
+        <input type="checkbox" id="ACTIVE" name="active" {% if active_value %}checked{% endif %}>
+    </div>
+    <div class="button-group">
+        {{  caller() }}
+    </div>
+</form></div>
+{% endmacro %}
+
 {% block body %}
     <h1> Data Collection </h1>
 
-    <div>
-        <p> Some sort of graph to show history of when the data scraper was ran. </p>
-    </div>
-
-    <div>
-        <p> Some sort of graph to show how large the database is and how much memory we still have </p>
-    </div>
-
-    <div>
-        <p> Some sort of box to display logged messages from when the app. </p>
-    </div>
-
-    <div>
-        <p> Some sort of box to display logged messages from the data scraper</p>
-    </div>
-
-    <form action="{{ url_for('fetch_data') }}" method="post">
-        <button type="submit">Fetch rising stars right now</button>
-    </form>
-
     <div class="watched-pages-div">
         {% for watched_url in watched_urls %}
-            <form>
-                <label for="from_url">URL</label>
-                <input type="text" id="from_url" value="{{ watched_url.url }}" readonly>
-                <br>
-
-                <label for="alias">Alias</label>
-                <input type="text" id="alias" value="{{ watched_url.alias }}">
-                <br>
-
-                <label for="active">Active</label>
-                <input type="checkbox" id="active" value="True" {% if watched_url.active %}checked{% endif %}>
-                <br>
-
-                <button type="submit">Update</button>
-
-                <button type="submit">Delete</button>
-            </form>
+            {% call watched_url_data_entry(
+                watched_url.url, watched_url.alias, watched_url.active,
+                form_endpoint = url_for('update_watched_url'), editable_url = False) %}
+                <div>
+                    <button type="submit" class="watched-form-save">Save</button>
+                    <button type="submit" class="watched-form-fetch">Fetch now</button>
+                </div>
+                <div>
+                    <button type="submit" class="watched-form-delete">Delete</button>
+                </div>
+            {% endcall %}
         {% endfor %}
+
+        <div class="watched-page-create">
+            <button id="show-form-button" class="plus-button" title="Add new item">+</button>
+        </div>
+        {% call watched_url_data_entry("", "", False, form_endpoint = url_for('update_watched_url'), editable_url = True, hidden=True) %}
+            <div>
+                <button type="submit" class="watched-form-create">Create</button>
+            </div>
+            <div>
+                <button type="reset" class="watched-form-clear">Clear</button>
+            </div>
+        {% endcall %}
     </div>
 
+    <script src="{{ url_for('static', filename='watched-urls.js') }}"></script>
 {% endblock %}
+
+{#    <div>#}
+{#        <p> Some sort of graph to show history of when the data scraper was ran. </p>#}
+{#    </div>#}
+{##}
+{#    <div>#}
+{#        <p> Some sort of graph to show how large the database is and how much memory we still have </p>#}
+{#    </div>#}
+{##}
+{#    <div>#}
+{#        <p> Some sort of box to display logged messages from when the app. </p>#}
+{#    </div>#}
+{##}
+{#    <div>#}
+{#        <p> Some sort of box to display logged messages from the data scraper</p>#}
+{#    </div>#}
+{##}
+{#    <form action="{{ url_for('fetch_data') }}" method="post">#}
+{#        <button type="submit">Fetch rising stars right now</button>#}
+{#    </form>#}

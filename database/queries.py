@@ -30,6 +30,7 @@ def unviewed_fictions(max_entries_returned : int, from_url="") -> List[FictionSn
     ).filter(
         subquery.c.rn == 1
     ).order_by(
+        subquery.c.snapshot_time.desc(),
         subquery.c.from_ranking.asc()
     ).limit(max_entries_returned).all())
     return fictions
