@@ -1,7 +1,19 @@
 {% macro display_fiction(fiction) %}
-    <a href="{{ fiction.url }}"><h2> {{ fiction.title }}</h2></a>
+<div class="fiction-list-item">
     <img src="{{ fiction.cover_url }}" alt="fiction cover image">
-    {% for paragraph in fiction.description_paragraphs() %}
-        <p> {{ paragraph }} </p>
-    {% endfor %}
+
+    <div class="fiction-content">
+        <a href="{{ fiction.url }}">
+            <h2>{{ fiction.title }}</h2>
+        </a>
+
+        {% for paragraph in fiction.description_paragraphs() %}
+            <p>{{ paragraph }}</p>
+        {% endfor %}
+
+        <div class="fiction-actions">
+            {{ caller() }}
+        </div>
+    </div>
+</div>
 {% endmacro %}

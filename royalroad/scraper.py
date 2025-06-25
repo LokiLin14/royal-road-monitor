@@ -13,6 +13,14 @@ from royalroad import FictionSnapshot
 def parseSpanToInt(title, html) -> int:
     return int(html.find('span', string=re.compile(f'[0-9]+ {title}')).string.split(' ')[0].replace(',', ''))
 
+def extract_description(div) -> str:
+    for br in div.find_all('br'):
+        br.replace_with('\n')
+    for hr in div.find_all('hr'):
+        hr.replace_with('\n\n')
+    text = div.get_text()
+    return text
+
 # snapshot_time, url, cover_url, title, description, tags, pages, chapters, rating, from_url, from_ranking
 def snapshot_fiction(fiction : Tag, snapshot_time : datetime, from_url : str, rank : int) -> FictionSnapshot:
     try:
@@ -26,7 +34,7 @@ def snapshot_fiction(fiction : Tag, snapshot_time : datetime, from_url : str, ra
             url = baseurl + fiction.find('h2', class_='fiction-title').find('a')['href'],
             cover_url = fiction.find('img')['src'],
             title = fiction.find('h2', class_='fiction-title').text.strip(),
-            description = '\n\n'.join([x.text for x in fiction.find('div', id=re.compile('^description-')).find_all('p')]),
+            description = extract_description(fiction.find('div', id=re.compile('^description-'))),
             tags = ','.join([x.text for x in fiction.find_all('a', class_="fiction-tag")]),
             pages = parseSpanToInt('Pages', stats),
             chapters = parseSpanToInt('Chapters', stats),

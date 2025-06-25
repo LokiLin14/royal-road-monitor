@@ -6,19 +6,16 @@
 {% endblock %}
 
 {% block body %}
-    <h1> Following </h1>
-
-    <div id="filters">
-        <p> Some sort of slider to filter by minimum page count </p>
-    </div>
-
-    <div id="fiction-list">
+    <link rel="stylesheet" href="{{  url_for('static', filename='fiction-card.css')}}">
+    <div class="fiction-list">
+        <h1> Following </h1>
+        <div id="filters">
+            <p> Some sort of slider to filter by minimum page count </p>
+        </div>
         {% for fiction in fictions %}
-            <div class="fiction-list-item">
-                {{ display_fiction(fiction) }}
-                <button> Unfollow </button>
-            </div>
+            {% call display_fiction(fiction) %}
+                <button class="discard-fiction"> Unfollow </button>
+            {% endcall %}
         {% endfor %}
     </div>
-
 {% endblock %}

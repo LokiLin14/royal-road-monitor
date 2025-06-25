@@ -5,11 +5,11 @@
     <title>{% block title %}{% endblock %} | Customisable Rising Stars</title>
 </head>
 <body>
-    <nav>
+    <div class="navbar">
         <a href="{{ url_for('new') }}">New</a>
         <a href="{{ url_for('watched') }}">Following</a>
         <a href="{{ url_for('data') }}">Data</a>
-    </nav>
+    </div>
 
     {% block body %}
     {% endblock %}

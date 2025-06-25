@@ -6,15 +6,14 @@
 {% endblock %}
 
 {% block body %}
-    <h1> New Fictions </h1>
-
-    <div id="fiction-list">
+    <link rel="stylesheet" href="{{  url_for('static', filename='fiction-card.css')}}">
+    <div class="fiction-list">
+        <h1> New Fictions </h1>
         {% for fiction in fictions %}
-            <div class="fiction-list-item">
-                {{ display_fiction(fiction) }}
+            {% call display_fiction(fiction) %}
                 <button class="follow-fiction">Follow</button>
                 <button class="discard-fiction">Not interested</button>
-            </div>
+            {% endcall %}
         {% endfor %}
     </div>
 

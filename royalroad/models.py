@@ -30,7 +30,7 @@ class FictionSnapshot(Base):
         self.from_ranking = from_ranking
 
     def description_paragraphs(self):
-        return self.description.split('\n\n')
+        return self.description.split('\n')
 
     def __repr__(self) -> str:
         return '<FictionSnapshot title=%r, snapshot_time=%r>' % (self.title, self.snapshot_time)
