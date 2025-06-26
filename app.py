@@ -1,18 +1,25 @@
+import logging
 from datetime import datetime
-
+from logging import config
 from flask import Flask, render_template, redirect, url_for, request, make_response, send_from_directory
 from wtforms import Form, BooleanField, StringField, validators
 
 from database import db_session, init_db
 from database.queries import unviewed_fictions, followed_fictions, watched_urls
-from royalroad.models import ViewedFiction
+from royalroad.models import ViewedFiction, WatchedURL
 from royalroad.scraper import snapshot_url
 
+logging.basicConfig(
+    format='[%(asctime)s] %(levelname)s in %(name)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
 init_db()
+
 app = Flask(__name__)
 
 # Pages for viewing fictions
-number_of_entries_per_page = 20
+number_of_entries_per_page = 50
 
 @app.route("/")
 def new():
@@ -52,6 +59,28 @@ def update_watched_url():
     form = WatchedURLForm(request.form)
     if not form.validate():
         return make_response({'message': form.errors}, 400)
+    action = request.form.get("action")
+    app.logger.debug(f'update_watched_url action={action}')
+    if action == 'delete':
+        db_session.query(
+            WatchedURL
+        ).filter(
+            WatchedURL.url == form.url.data
+        ).delete(synchronize_session='fetch')
+        db_session.commit()
+    if action == 'save':
+        db_session.query(
+            WatchedURL
+        ).filter(
+            WatchedURL.url == form.url.data
+        ).update({"alias": form.alias.data, "active": form.active.data }, synchronize_session="fetch")
+        db_session.commit()
+    if action == 'fetch':
+        app.logger.info(f"Fetching fiction page requested, url={form.url.data}")
+        snapshots = snapshot_url(form.url.data)
+        for snapshot in snapshots:
+            db_session.add(snapshot)
+        db_session.commit()
     return redirect(url_for('data'))
 
 @app.route('/api/create_watched_url', methods=['POST'])
@@ -59,6 +88,10 @@ def create_watched_url():
     form = WatchedURLForm(request.form)
     if not form.validate():
         return make_response({'message': form.errors}, 400)
+    watched_url = WatchedURL(form.url.data, form.active.data, form.alias.data)
+    app.logger.info(f'Creating watched url {watched_url}')
+    db_session.add(watched_url)
+    db_session.commit()
     return redirect(url_for('data'))
 
 class ViewFictionForm(Form):

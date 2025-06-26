@@ -33,11 +33,11 @@
                 watched_url.url, watched_url.alias, watched_url.active,
                 form_endpoint = url_for('update_watched_url'), editable_url = False) %}
                 <div>
-                    <button type="submit" class="watched-form-save">Save</button>
-                    <button type="submit" class="watched-form-fetch">Fetch now</button>
+                    <button type="submit" class="watched-form-save" name="action" value="save">Save</button>
+                    <button type="submit" class="watched-form-fetch" name="action" value="fetch">Fetch now</button>
                 </div>
                 <div>
-                    <button type="submit" class="watched-form-delete">Delete</button>
+                    <button type="submit" class="watched-form-delete" name="action" value="delete">Delete</button>
                 </div>
             {% endcall %}
         {% endfor %}
@@ -45,7 +45,7 @@
         <div class="watched-page-create">
             <button id="show-form-button" class="plus-button" title="Add new item">+</button>
         </div>
-        {% call watched_url_data_entry("", "", False, form_endpoint = url_for('update_watched_url'), editable_url = True, hidden=True) %}
+        {% call watched_url_data_entry("", "", True, form_endpoint = url_for('create_watched_url'), editable_url = True, hidden=True) %}
             <div>
                 <button type="submit" class="watched-form-create">Create</button>
             </div>

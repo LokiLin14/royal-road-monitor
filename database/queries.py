@@ -86,10 +86,17 @@ def add_data():
     pass
 
 def watched_urls() -> List[WatchedURL]:
-    return [WatchedURL('https://www.royalroad.com/fictions/rising-stars', False, 'Rising Stars')]
+    return db_session.query(WatchedURL).all()
 
 if __name__ == '__main__':
     init_db()
 
-    fictions = unviewed_fictions(20)
-    print(fictions)
+    # fictions = unviewed_fictions(20)
+    # print(fictions)
+
+    # watched_url = WatchedURL("asdasdf", True, "asldkfj")
+    # db_session.add(watched_url)
+    # db_session.commit()
+
+    watched = watched_urls()
+    print(watched)
