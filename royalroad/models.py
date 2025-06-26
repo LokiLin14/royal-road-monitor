@@ -49,8 +49,19 @@ class ViewedFiction(Base):
         self.interested = interested
 
     def __repr__(self) -> str:
-        return '<NotInterestedInFiction url=%r, marked_time=%r, interested=%r>' % (self.url, self.marked_time,
+        return '<ViewedFiction url=%r, marked_time=%r, interested=%r>' % (self.url, self.marked_time,
                                                                                    self.interested)
+class NotInterestedInFiction(Base):
+    __tablename__ = 'not_interested_in_fictions'
+    url = Column(String, primary_key=True)
+    marked_time = Column(DateTime, primary_key=False)
+
+    def __init__(self, url, marked_time):
+        self.url = url
+        self.marked_time = marked_time
+
+    def __repr__(self) -> str:
+        return '<NotInterestedInFiction url=%r, marked_time=%r>' % (self.url, self.marked_time)
 
 class WatchedURL(Base):
     __tablename__ = 'watched_urls'

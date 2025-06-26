@@ -1,4 +1,4 @@
-{% macro display_fiction(fiction, display_follow=false, display_not_interested=false) %}
+{% macro display_fiction(fiction, display_follow=false, display_not_interested=false, display_dont_show=false) %}
 <div class="fiction-list-item">
     <img src="{{ fiction.cover_url }}" alt="fiction cover image">
 
@@ -6,6 +6,8 @@
         <a href="{{ fiction.url }}">
             <h2>{{ fiction.title }}</h2>
         </a>
+
+        <p>Snapshot time: {{ fiction.snapshot_time.strftime("%Y-%m-%d %H:%M") }}</p>
 
         {% for paragraph in fiction.description_paragraphs() %}
             <p>{{ paragraph }}</p>
@@ -18,15 +20,18 @@
             {% if display_not_interested %}
                 <button class="discard-fiction">Not interested</button>
             {% endif %}
+            {% if display_dont_show %}
+                <button class="dont-show-fiction">Don't Show Again</button>
+            {% endif %}
         </div>
     </div>
 </div>
 {% endmacro %}
 
-{% macro display_fictions(fictions, display_follow=false, display_not_interested=false) %}
+{% macro display_fictions(fictions, display_follow=false, display_not_interested=false, display_dont_show=false) %}
     <div class="fiction-list">
     {% for fiction in fictions %}
-        {{ display_fiction(fiction, display_follow, display_not_interested) }}
+        {{ display_fiction(fiction, display_follow, display_not_interested, display_dont_show) }}
     {% endfor %}
     </div>
     <script src="{{ url_for('static', filename='fiction-buttons.js') }}"></script>

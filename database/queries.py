@@ -6,7 +6,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import aliased
 
 from database import db_session, init_db
-from royalroad.models import FictionSnapshot, ViewedFiction, WatchedURL
+from royalroad.models import FictionSnapshot, ViewedFiction, WatchedURL, NotInterestedInFiction
 
 
 def unviewed_fictions(max_entries_returned : int, from_url="") -> List[FictionSnapshot]:
@@ -34,6 +34,32 @@ def unviewed_fictions(max_entries_returned : int, from_url="") -> List[FictionSn
         subquery.c.from_ranking.asc()
     ).limit(max_entries_returned).all())
     return fictions
+
+# Returns a list of fiction snapshots not in the not_interested table ordered by their first time they were seen
+def new_fictions(max_entries_returned : int, from_url : str="") -> List[FictionSnapshot]:
+    # Filter for only snapshots in the url and number the snapshots by their creation time
+    numbered_snapshots = db_session.query(
+        FictionSnapshot,
+        func.row_number().over(
+            partition_by=FictionSnapshot.url,
+            order_by=FictionSnapshot.snapshot_time.asc()
+        ).label('rn')
+    ).filter(
+        FictionSnapshot.from_url == from_url,
+        FictionSnapshot.url.not_in(
+            db_session.query(NotInterestedInFiction.url)
+        )
+    ).subquery()
+    # Get the latest snapshot entry
+    fictions_query = db_session.query(
+        aliased(FictionSnapshot, numbered_snapshots)
+    ).filter(
+        numbered_snapshots.c.rn == 1,
+    ).order_by(
+        numbered_snapshots.c.snapshot_time.desc(),
+        numbered_snapshots.c.from_ranking.asc()
+    ).limit(max_entries_returned)
+    return fictions_query.all()
 
 def followed_fictions(max_entries_returned : int) -> List[FictionSnapshot]:
     subquery = db_session.query(
@@ -74,16 +100,47 @@ def add_data():
         from_url="",
         from_ranking = 0
     )
+    snapshot1 = FictionSnapshot(
+        snapshot_time=datetime.now(),
+        url="test1",
+        cover_url="",
+        title="test1",
+        description="",
+        tags="",
+        pages=0,
+        chapters=0,
+        rating=4.5,
+        from_url="",
+        from_ranking=0
+    )
+    snapshot2 = FictionSnapshot(
+        snapshot_time = datetime.now(),
+        url = "test0",
+        cover_url = "",
+        title = "test0",
+        description = "",
+        tags = "",
+        pages = 0,
+        chapters = 0,
+        rating = 4.5,
+        from_url="",
+        from_ranking = 0
+    )
     db_session.add(snapshot)
-    db_session.commit()
-    not_interested = ViewedFiction(
+    db_session.add(snapshot1)
+    db_session.add(snapshot2)
+    viewed = ViewedFiction(
         url = "test0",
         marked_time = datetime.now(),
         interested=True
     )
+    db_session.add(viewed)
+    not_interested = NotInterestedInFiction(
+        url = "test0",
+        marked_time = datetime.now(),
+    )
     db_session.add(not_interested)
     db_session.commit()
-    pass
 
 def watched_urls() -> List[WatchedURL]:
     return db_session.query(WatchedURL).all()
@@ -91,12 +148,8 @@ def watched_urls() -> List[WatchedURL]:
 if __name__ == '__main__':
     init_db()
 
-    # fictions = unviewed_fictions(20)
-    # print(fictions)
+    add_data()
 
-    # watched_url = WatchedURL("asdasdf", True, "asldkfj")
-    # db_session.add(watched_url)
-    # db_session.commit()
+    new_fics = new_fictions(10, "");
 
-    watched = watched_urls()
-    print(watched)
+    print(new_fics)

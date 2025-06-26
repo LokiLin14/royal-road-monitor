@@ -1,10 +1,14 @@
 .fiction-display-heading {
-    margin: 0 auto;
+    margin: 0 auto 20px auto;
     max-width: 900px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+
+    h1, p {
+        margin: 0;
+    }
 }
 
 .fiction-list {
@@ -81,7 +85,8 @@
 
 /* Button styling */
 .follow-fiction,
-.discard-fiction {
+.discard-fiction,
+.dont-show-fiction {
     padding: 0.6rem 1.2rem;
     border: none;
     border-radius: 6px;
@@ -101,13 +106,15 @@
     transform: translateY(-1px);
 }
 
-.discard-fiction {
+.discard-fiction,
+.dont-show-fiction {
     background: #ecf0f1;
     color: #7f8c8d;
     border: 1px solid #bdc3c7;
 }
 
-.discard-fiction:hover {
+.discard-fiction:hover,
+.dont-show-fiction:hover {
     background: #d5dbdb;
     color: #34495e;
 }
