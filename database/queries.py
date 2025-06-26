@@ -6,7 +6,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import aliased
 
 from database import db_session, init_db
-from royalroad.models import FictionSnapshot, ViewedFiction, WatchedURL, NotInterestedInFiction
+from royalroad.models import FictionSnapshot, WatchedURL, NotInterestedInFiction
 
 
 def unviewed_fictions(max_entries_returned : int, from_url="") -> List[FictionSnapshot]:
@@ -129,12 +129,6 @@ def add_data():
     db_session.add(snapshot)
     db_session.add(snapshot1)
     db_session.add(snapshot2)
-    viewed = ViewedFiction(
-        url = "test0",
-        marked_time = datetime.now(),
-        interested=True
-    )
-    db_session.add(viewed)
     not_interested = NotInterestedInFiction(
         url = "test0",
         marked_time = datetime.now(),

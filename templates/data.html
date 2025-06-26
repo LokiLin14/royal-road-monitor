@@ -33,7 +33,7 @@
         {% for watched_url in watched_urls %}
             {% call watched_url_data_entry(
                 watched_url.url, watched_url.alias, watched_url.active,
-                form_endpoint = url_for('update_watched_url'), editable_url = False) %}
+                form_endpoint = url_for('action_on_watched_url'), editable_url = False) %}
                 <div>
                     <button type="submit" class="watched-form-save" name="action" value="save">Save</button>
                     <button type="submit" class="watched-form-fetch" name="action" value="fetch">Fetch now</button>

@@ -37,20 +37,6 @@ class FictionSnapshot(Base):
     def __repr__(self) -> str:
         return '<FictionSnapshot title=%r, snapshot_time=%r>' % (self.title, self.snapshot_time)
 
-class ViewedFiction(Base):
-    __tablename__ = 'viewed_fictions'
-    url = Column(String, primary_key=True)
-    marked_time = Column(DateTime, primary_key=True)
-    interested = Column(Boolean, primary_key=False)
-
-    def __init__(self, url, marked_time, interested):
-        self.url = url
-        self.marked_time = marked_time
-        self.interested = interested
-
-    def __repr__(self) -> str:
-        return '<ViewedFiction url=%r, marked_time=%r, interested=%r>' % (self.url, self.marked_time,
-                                                                                   self.interested)
 class NotInterestedInFiction(Base):
     __tablename__ = 'not_interested_in_fictions'
     url = Column(String, primary_key=True)
