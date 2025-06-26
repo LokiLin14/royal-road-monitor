@@ -13,7 +13,9 @@
             <label for="url"></label>
             <select id="url" name="url">
                 {% for from_url in from_urls %}
-                    <option value="{{ from_url.url }}">{{ from_url.alias }}</option>
+                    <option value="{{ from_url.url }}" {% if request.args.get('url') == from_url.url %}selected{% endif %}>
+                        {{ from_url.alias }}
+                    </option>
                 {% endfor %}
             </select>
 
