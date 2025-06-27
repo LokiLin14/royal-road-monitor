@@ -1,11 +1,10 @@
 import logging
 from datetime import datetime
-from logging import config
-from flask import Flask, render_template, redirect, url_for, request, make_response, send_from_directory
+
+from flask import Flask, render_template, redirect, url_for, request, make_response
 from wtforms import Form, BooleanField, StringField, validators
 
-from database import db_session, init_db
-from database.queries import unviewed_fictions, followed_fictions, watched_urls, new_fictions
+from database import db_session, init_db, queries
 from royalroad.models import WatchedURL, NotInterestedInFiction
 from royalroad.scraper import snapshot_url
 
@@ -23,18 +22,22 @@ number_of_entries_per_page = 50
 
 @app.route("/")
 def new():
-    from_urls = watched_urls()
+    from_urls = queries.watched_urls()
     if len(from_urls) == 0:
         default_url = ""
     else:
         default_url = from_urls[0].url
     page_url = request.args.get('url', default_url)
-    fictions = new_fictions(number_of_entries_per_page, from_url=page_url)
+    fictions = queries.new_fictions(number_of_entries_per_page, from_url=page_url)
     return render_template('new_fictions.html', fictions=fictions, from_urls=from_urls)
 
-@app.route("/data")
-def data():
-    return render_template('data.html', watched_urls=watched_urls())
+@app.route("/dont_shows")
+def dont_shows():
+    return render_template('dont_shows.html', dont_shows=queries.dont_show_fictions())
+
+@app.route("/watched_urls")
+def watched_urls():
+    return render_template('watched_urls.html', watched_urls=queries.watched_urls())
 
 class WatchedURLForm(Form):
     url = StringField('url', validators=[validators.DataRequired()])
@@ -69,7 +72,7 @@ def action_on_watched_url():
             app.logger.debug(f"Snapshot {snapshot}")
             db_session.add(snapshot)
         db_session.commit()
-    return redirect(url_for('data'))
+    return redirect(url_for('watched_urls'))
 
 @app.route('/api/create_watched_url', methods=['POST'])
 def create_watched_url():
@@ -80,7 +83,7 @@ def create_watched_url():
     app.logger.info(f'Creating watched url {watched_url}')
     db_session.add(watched_url)
     db_session.commit()
-    return redirect(url_for('data'))
+    return redirect(url_for('watched_urls'))
 
 class DontShowFictionForm(Form):
     url = StringField('URL', validators=[validators.DataRequired(), validators.Length(max=200)])

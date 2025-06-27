@@ -1,8 +1,9 @@
 from datetime import datetime
 from logging.handlers import WatchedFileHandler
-from typing import List
+from time import sleep
+from typing import List, Tuple
 
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.orm import aliased
 
 from database import db_session, init_db
@@ -35,58 +36,74 @@ def unviewed_fictions(max_entries_returned : int, from_url="") -> List[FictionSn
     ).limit(max_entries_returned).all())
     return fictions
 
+def all_fictions(max_entries_returned:int):
+    query = db_session.query(
+        FictionSnapshot,
+    ).order_by(
+        FictionSnapshot.snapshot_time.desc(),
+        FictionSnapshot.from_ranking.asc()
+    ).limit(max_entries_returned)
+    return query.all()
+
 # Returns a list of fiction snapshots not in the not_interested table ordered by their first time they were seen
 def new_fictions(max_entries_returned : int, from_url : str="") -> List[FictionSnapshot]:
     # Filter for only snapshots in the url and number the snapshots by their creation time
-    numbered_snapshots = db_session.query(
+    first_appearances = (db_session.query(
+        FictionSnapshot.url,
+        func.max(FictionSnapshot.snapshot_time).label('snapshot_time'),
+    ).filter(
+        FictionSnapshot.from_url == from_url
+    ).group_by(
+        FictionSnapshot.url,
+    ).subquery())
+    first_snapshots = db_session.query(
         FictionSnapshot,
-        func.row_number().over(
-            partition_by=FictionSnapshot.url,
-            order_by=FictionSnapshot.snapshot_time.asc()
-        ).label('rn')
-    ).filter(
-        FictionSnapshot.from_url == from_url,
-        FictionSnapshot.url.not_in(
-            db_session.query(NotInterestedInFiction.url)
+    ).join(
+        first_appearances,
+        and_(
+            FictionSnapshot.url == first_appearances.c.url,
+            FictionSnapshot.snapshot_time == first_appearances.c.snapshot_time,
         )
-    ).subquery()
-    # Get the latest snapshot entry
-    fictions_query = db_session.query(
-        aliased(FictionSnapshot, numbered_snapshots)
-    ).filter(
-        numbered_snapshots.c.rn == 1,
     ).order_by(
-        numbered_snapshots.c.snapshot_time.desc(),
-        numbered_snapshots.c.from_ranking.asc()
+        FictionSnapshot.snapshot_time.desc(),
+        FictionSnapshot.from_ranking.asc()
     ).limit(max_entries_returned)
-    return fictions_query.all()
+    return first_snapshots.all()
 
-def followed_fictions(max_entries_returned : int) -> List[FictionSnapshot]:
-    subquery = db_session.query(
+def dont_show_fictions(max_entries_returned:int=100) -> List[Tuple[NotInterestedInFiction, FictionSnapshot]]:
+    first_appearances = db_session.query(
+        FictionSnapshot.url,
+        func.max(FictionSnapshot.snapshot_time).label('snapshot_time'),
+    ).group_by(
+        FictionSnapshot.url,
+    ).subquery()
+    first_snapshots = db_session.query(
         FictionSnapshot,
-        func.row_number().over(
-            partition_by=FictionSnapshot.url,
-            order_by=FictionSnapshot.snapshot_time.desc()
-        ).label('rn')
-    ).filter(
-        FictionSnapshot.url.in_(
-            db_session.query(
-                ViewedFiction.url
-            ).filter(
-                ViewedFiction.interested.is_(True),
-            )
+    ).join(
+        first_appearances,
+        and_(
+            FictionSnapshot.url == first_appearances.c.url,
+            FictionSnapshot.snapshot_time == first_appearances.c.snapshot_time,
         )
     ).subquery()
-    fictions = db_session.query(
-        aliased(FictionSnapshot, subquery)
+    query = db_session.query(
+        NotInterestedInFiction,
+        aliased(FictionSnapshot, first_snapshots),
+    ).join(
+        first_snapshots,
+        NotInterestedInFiction.url == first_snapshots.c.url,
+        full=True
     ).filter(
-        subquery.c.rn == 1
+        NotInterestedInFiction.url.is_not(None)
     ).order_by(
-        subquery.c.from_ranking.asc()
-    ).limit(max_entries_returned).all()
-    return fictions
+        NotInterestedInFiction.marked_time.desc(),
+    )
+    return query.all()
 
 def add_data():
+    db_session.query(FictionSnapshot).delete()
+    db_session.query(WatchedURL).delete()
+    db_session.query(NotInterestedInFiction).delete()
     snapshot = FictionSnapshot(
         snapshot_time = datetime.now(),
         url = "test0",
@@ -144,6 +161,10 @@ if __name__ == '__main__':
 
     add_data()
 
-    new_fics = new_fictions(10, "");
-
+    new_fics = all_fictions(10);
     print(new_fics)
+
+    dont_shows = dont_show_fictions(10)
+    print(dont_shows)
+
+

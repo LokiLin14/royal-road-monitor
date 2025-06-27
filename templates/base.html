@@ -6,11 +6,13 @@
 
     <link rel="stylesheet" href="{{  url_for('static', filename='fiction-card.css')}}">
     <link rel="stylesheet" href="{{  url_for('static', filename='watched-urls.css')}}">
+    <link rel="stylesheet" href="{{  url_for('static', filename='dont-show.css')}}">
 </head>
 <body>
     <div class="navbar">
         <a href="{{ url_for('new') }}">New</a>
-        <a href="{{ url_for('data') }}">Data</a>
+        <a href="{{ url_for('dont_shows') }}">Don't Shows</a>
+        <a href="{{ url_for('watched_urls') }}">Data</a>
     </div>
 
     {% block body %}

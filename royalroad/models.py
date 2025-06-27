@@ -35,7 +35,7 @@ class FictionSnapshot(Base):
         return self.description.split('\n')
 
     def __repr__(self) -> str:
-        return '<FictionSnapshot title=%r, snapshot_time=%r>' % (self.title, self.snapshot_time)
+        return '<FictionSnapshot title=%r, url=%r, snapshot_time=%r>' % (self.title, self.url, self.snapshot_time)
 
 class NotInterestedInFiction(Base):
     __tablename__ = 'not_interested_in_fictions'

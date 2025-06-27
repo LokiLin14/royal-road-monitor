@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% from "macros/fiction_render.html" import display_fiction %}
+
+{% block title %}
+    Don't Shows
+{% endblock %}
+
+{% block body %}
+    <div class="fiction-display-heading">
+        <div>
+            <h1>Don't Shows</h1>
+            <p>Displays the history of marking fictions with don't show. Allows undoing a don't show.</p>
+        </div>
+
+    </div>
+
+    <div class="fiction-list">
+    {% for (dont_show, snapshot) in dont_shows %}
+        <div class="fiction-list-item dont-show-item">
+            <p>Marked <b>{{ snapshot.title }}</b> at {{ dont_show.marked_time.strftime("%Y-%m-%d %H:%M") }} </p>
+            <button class="gray-button">Undo</button>
+        </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}
