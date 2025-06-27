@@ -98,7 +98,7 @@ def dont_show_fictions(max_entries_returned:int=100) -> List[Tuple[NotInterested
         NotInterestedInFiction.url.is_not(None)
     ).order_by(
         NotInterestedInFiction.marked_time.desc(),
-    )
+    ).limit(max_entries_returned)
     return query.all()
 
 def add_data():
