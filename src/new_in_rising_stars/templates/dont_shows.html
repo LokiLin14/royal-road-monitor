@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% from "macros/fiction_render.html" import display_fiction %}
 
 {% block title %}
     Don't Shows
@@ -17,10 +16,11 @@
     <div class="content-body">
     {% for (dont_show, snapshot) in dont_shows %}
         <div class="content-item dont-show-item">
-            <p>Marked <b>{{ snapshot.title }}</b> at {{ dont_show.marked_time.strftime("%Y-%m-%d %H:%M") }} </p>
-            <button class="rounded-button  gray-button">Undo</button>
+            <p>Marked <a href="{{ dont_show.url }}"><b>{{ snapshot.title }}</b></a> at {{ dont_show.marked_time.strftime("%Y-%m-%d %H:%M") }} </p>
+            <button class="rounded-button gray-button undo-dont-show-fiction">Undo</button>
         </div>
     {% endfor %}
     </div>
+    <script src="{{ url_for('static', filename='dont-show.js') }}"></script>
 
 {% endblock %}

@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup, Tag
 
-from royalroad import FictionSnapshot
+from .models import FictionSnapshot
 
 def parseSpanToInt(title, html) -> int:
     return int(html.find('span', string=re.compile(f'[0-9]+ {title}')).string.split(' ')[0].replace(',', ''))
@@ -85,13 +85,14 @@ def snapshot_url(url) -> List[FictionSnapshot]:
         print(f"Error in snapshot_url: {e}")
         return []
 
+# Code below for development and not for use
 def download_rising_stars(path):
     req = requests.get('https://www.royalroad.com/fictions/rising-stars')
     with open(path, 'x') as f:
         f.write(req.text)
 
 def check_on_download():
-    test_file = '../test/rising-stars.html'
+    test_file = '../../../test/rising-stars.html'
     if not os.path.exists(test_file):
         print("Downloading rising stars...")
         download_rising_stars(test_file)
@@ -105,5 +106,5 @@ def check_on_url():
     print(snapshots)
 
 if __name__ == "__main__":
-    # check_on_download()
-    check_on_url()
+    check_on_download()
+    # check_on_url()

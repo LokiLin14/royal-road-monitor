@@ -1,0 +1,17 @@
+[build-system]
+requires = ["flit_core >=3.11,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "new_in_rising_stars"
+authors = [{name = "LokiLin14", email = "lulcosass@gmail.com"}]
+license = "MIT"
+license-files = ["LICENSE"]
+dynamic = ["version", "description"]
+dependencies = [
+    "flask~=3.1.1",
+    "sqlalchemy~=2.0.41",
+    "beautifulsoup4~=4.13.4",
+    "requests~=2.32.4",
+    "WTForms~=3.2.1"
+]

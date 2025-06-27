@@ -1,7 +1,7 @@
 # A FictionSnapshot is the state of a fiction at a specific point in time.
 from typing import List
 
-from database import Base
+from new_in_rising_stars.database import Base
 from sqlalchemy import Column, DateTime, String, Float, Integer, Boolean
 
 class FictionSnapshot(Base):
