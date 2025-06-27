@@ -29,6 +29,11 @@ def snapshot_fiction(fiction : Tag, snapshot_time : datetime, from_url : str, ra
         views = parseSpanToInt('Views', stats)
         parsed = urlparse(from_url)
         baseurl = f"{parsed.scheme}://{parsed.netloc}"
+        maybeStars = stats.find('span', class_="star")
+        if maybeStars is None:
+            rating = 0.0
+        else:
+            rating = float(maybeStars['title'])
         return FictionSnapshot(
             snapshot_time = snapshot_time,
             url = baseurl + fiction.find('h2', class_='fiction-title').find('a')['href'],
@@ -38,12 +43,15 @@ def snapshot_fiction(fiction : Tag, snapshot_time : datetime, from_url : str, ra
             tags = [x.text for x in fiction.find_all('a', class_="fiction-tag")],
             pages = parseSpanToInt('Pages', stats),
             chapters = parseSpanToInt('Chapters', stats),
-            rating = float(stats.find('span', class_="star")['title']),
+            rating = rating,
             from_url = from_url,
             from_ranking = rank
         )
     except Exception as e:
-        print(f"Error in snapshot_fiction: {e}")
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        line_number = exc_tb.tb_lineno
+        filename = exc_tb.tb_frame.f_code.co_filename
+        print(f"Error in snapshot_fiction: '{e}' occurred at line {line_number} in {filename}")
         raise e
 
 def snapshot_page(html_text, from_url) -> List[FictionSnapshot]:
@@ -93,9 +101,9 @@ def check_on_download():
     print(snapshots)
 
 def check_on_url():
-    snapshots = snapshot_url('https://www.royalroad.com/fictions/rising-stars')
+    snapshots = snapshot_url('https://www.royalroad.com/fictions/rising-stars?genre=sci_fi')
     print(snapshots)
 
 if __name__ == "__main__":
-    check_on_download()
-    # check_on_url()
+    # check_on_download()
+    check_on_url()

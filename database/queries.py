@@ -48,14 +48,14 @@ def all_fictions(max_entries_returned:int):
 # Returns a list of fiction snapshots not in the not_interested table ordered by their first time they were seen
 def new_fictions(max_entries_returned : int, from_url : str="") -> List[FictionSnapshot]:
     # Filter for only snapshots in the url and number the snapshots by their creation time
-    first_appearances = (db_session.query(
+    first_appearances = db_session.query(
         FictionSnapshot.url,
         func.min(FictionSnapshot.snapshot_time).label('snapshot_time'),
     ).filter(
         FictionSnapshot.from_url == from_url
     ).group_by(
         FictionSnapshot.url,
-    ).subquery())
+    ).subquery()
     first_snapshots = db_session.query(
         FictionSnapshot,
     ).join(
