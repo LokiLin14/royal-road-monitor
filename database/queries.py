@@ -52,7 +52,8 @@ def new_fictions(max_entries_returned : int, from_url : str="") -> List[FictionS
         FictionSnapshot.url,
         func.min(FictionSnapshot.snapshot_time).label('snapshot_time'),
     ).filter(
-        FictionSnapshot.from_url == from_url
+        FictionSnapshot.from_url == from_url,
+        FictionSnapshot.url.not_in(db_session.query(NotInterestedInFiction.url))
     ).group_by(
         FictionSnapshot.url,
     ).subquery()
