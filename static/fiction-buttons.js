@@ -45,7 +45,7 @@ async function mark_dont_show_fiction(fiction_url) {
 const followButtons = document.querySelectorAll('.follow-fiction');
 followButtons.forEach(button => {
     button.addEventListener('click', async function() {
-        const fictionItem = this.closest('.fiction-list-item');
+        const fictionItem = this.closest('.content-item');
         const link = fictionItem.querySelector('a').href;
         const success = await view_fiction(link, true);
         if (success) {
@@ -58,7 +58,7 @@ followButtons.forEach(button => {
 const discardButtons = document.querySelectorAll('.discard-fiction');
 discardButtons.forEach(button => {
     button.addEventListener('click', async function() {
-        const fictionItem = this.closest('.fiction-list-item');
+        const fictionItem = this.closest('.content-item');
         const link = fictionItem.querySelector('a').href;
         const success = await view_fiction(link, false);
         if (success) {
@@ -71,7 +71,7 @@ discardButtons.forEach(button => {
 const dontShowButtons = document.querySelectorAll('.dont-show-fiction');
 dontShowButtons.forEach(button => {
     button.addEventListener('click', async function() {
-        const fictionItem = this.closest('.fiction-list-item');
+        const fictionItem = this.closest('.content-item');
         const link = fictionItem.querySelector('a').href;
         const success = await mark_dont_show_fiction(link);
         if (success) {

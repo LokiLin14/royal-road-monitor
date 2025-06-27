@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% macro watched_url_data_entry(url_value, alias_value, active_value, form_endpoint="", editable_url=True, hidden=False) %}
-<div class="watched-page-card {% if hidden %}hidden-item{% endif %}"><form action="{{ form_endpoint }}" method="post">
+<div class="content-item watched-page-card {% if hidden %}hidden-item{% endif %}"><form action="{{ form_endpoint }}" method="post">
     <div class="form-group">
         <label for="URL">URL</label>
         <input type="text" id="URL" name="url" value="{{ url_value }}" {% if not editable_url %} readonly {% endif %}>
@@ -25,21 +25,21 @@
 {% endmacro %}
 
 {% block body %}
-    <div class="watched-header-div">
+    <div class="content-heading">
         <h1> Data Collection </h1>
     </div>
 
-    <div class="watched-pages-div">
+    <div class="content-body">
         {% for watched_url in watched_urls %}
             {% call watched_url_data_entry(
                 watched_url.url, watched_url.alias, watched_url.active,
                 form_endpoint = url_for('action_on_watched_url'), editable_url = False) %}
                 <div>
-                    <button type="submit" class="watched-form-save" name="action" value="save">Save</button>
-                    <button type="submit" class="watched-form-fetch" name="action" value="fetch">Fetch now</button>
+                    <button type="submit" class="rounded-button blue-button" name="action" value="save">Save</button>
+                    <button type="submit" class="rounded-button gray-button" name="action" value="fetch">Fetch now</button>
                 </div>
                 <div>
-                    <button type="submit" class="watched-form-delete" name="action" value="delete">Delete</button>
+                    <button type="submit" class="rounded-button red-button" name="action" value="delete">Delete</button>
                 </div>
             {% endcall %}
         {% endfor %}
@@ -49,10 +49,10 @@
         </div>
         {% call watched_url_data_entry("", "", True, form_endpoint = url_for('create_watched_url'), editable_url = True, hidden=True) %}
             <div>
-                <button type="submit" class="watched-form-create">Create</button>
+                <button type="submit" class="rounded-button blue-button">Create</button>
             </div>
             <div>
-                <button type="reset" class="watched-form-clear">Clear</button>
+                <button type="reset" class="rounded-button red-button">Clear</button>
             </div>
         {% endcall %}
     </div>

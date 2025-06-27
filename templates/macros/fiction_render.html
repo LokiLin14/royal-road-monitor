@@ -1,5 +1,5 @@
 {% macro display_fiction(fiction, display_follow=false, display_not_interested=false, display_dont_show=false) %}
-<div class="fiction-list-item">
+<div class="content-item">
     <img src="{{ fiction.cover_url }}" alt="fiction cover image">
 
     <div class="fiction-content">
@@ -15,13 +15,13 @@
 
         <div class="fiction-actions">
             {% if display_follow %}
-                <button class="follow-fiction">Follow</button>
+                <button class="rounded-button follow-fiction">Follow</button>
             {% endif %}
             {% if display_not_interested %}
-                <button class="discard-fiction">Not interested</button>
+                <button class="rounded-button discard-fiction">Not interested</button>
             {% endif %}
             {% if display_dont_show %}
-                <button class="dont-show-fiction">Don't Show Again</button>
+                <button class="rounded-button gray-button">Don't Show Again</button>
             {% endif %}
         </div>
     </div>
@@ -29,7 +29,7 @@
 {% endmacro %}
 
 {% macro display_fictions(fictions, display_follow=false, display_not_interested=false, display_dont_show=false) %}
-    <div class="fiction-list">
+    <div class="content-body">
     {% for fiction in fictions %}
         {{ display_fiction(fiction, display_follow, display_not_interested, display_dont_show) }}
     {% endfor %}

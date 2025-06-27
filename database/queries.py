@@ -50,7 +50,7 @@ def new_fictions(max_entries_returned : int, from_url : str="") -> List[FictionS
     # Filter for only snapshots in the url and number the snapshots by their creation time
     first_appearances = (db_session.query(
         FictionSnapshot.url,
-        func.max(FictionSnapshot.snapshot_time).label('snapshot_time'),
+        func.min(FictionSnapshot.snapshot_time).label('snapshot_time'),
     ).filter(
         FictionSnapshot.from_url == from_url
     ).group_by(
@@ -73,7 +73,7 @@ def new_fictions(max_entries_returned : int, from_url : str="") -> List[FictionS
 def dont_show_fictions(max_entries_returned:int=100) -> List[Tuple[NotInterestedInFiction, FictionSnapshot]]:
     first_appearances = db_session.query(
         FictionSnapshot.url,
-        func.max(FictionSnapshot.snapshot_time).label('snapshot_time'),
+        func.min(FictionSnapshot.snapshot_time).label('snapshot_time'),
     ).group_by(
         FictionSnapshot.url,
     ).subquery()
