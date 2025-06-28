@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/lokilin14/royal_road_monitor:latest
+    image: ghcr.io/lokilin14/royal-road-monitor:latest
     container_name: royal_road_monitor
     networks:
       - royal_road_monitor
