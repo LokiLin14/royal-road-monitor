@@ -2,6 +2,7 @@ services:
   app:
     image: ghcr.io/lokilin14/royal-road-monitor:latest
     container_name: royal_road_monitor
+    hostname: app
     networks:
       - royal_road_monitor
     restart: always
@@ -19,7 +20,7 @@ services:
     command: sh -c "
       apk add tzdata
       && ln -s /usr/share/zoneinfo/${TZ} /etc/localtime
-      && echo \"0 3 * * * wget -qO- http://app:8080/api/v1/cron/$FLASK_CRON_KEY;echo\" > /tmp/crontab_tmp 
+      && echo \"0 */3 * * * wget -qO - http://app:5000/api/cron?cron_key=$FLASK_CRON_KEY\" > /tmp/crontab_tmp 
       && crontab /tmp/crontab_tmp
       && crond -f -L /dev/stdout
       && rm /tmp/crontab_tmp"
