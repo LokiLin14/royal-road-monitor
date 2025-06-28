@@ -143,11 +143,20 @@
         justify-content: space-between;
         align-items: center;
 
+        h2 {
+            margin-right: 0.5rem;
+        }
+
         button {
             border-radius: 12px;
             padding: 0.5rem;
-            margin: auto 0 auto 0;
+            margin: auto 0.5rem auto 0.5rem;
             flex-shrink: 1;
+        }
+
+        div {
+            display: flex;
+            flex-direction: row;
         }
     }
 }

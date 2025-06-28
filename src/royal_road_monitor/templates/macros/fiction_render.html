@@ -5,9 +5,12 @@
     <div class="fiction-content">
 
         <div class="fiction-top-bar-div">
-            <a href="{{ fiction.url }}">
-                <h2>{{ fiction.title }}</h2>
-            </a>
+            <div>
+                <a href="{{ fiction.url }}"><h2>{{ fiction.title }}</h2></a>
+                {% if display_dont_show %}
+                    <button class="rounded-button gray-button dont-show-fiction">Don't Show Again</button>
+                {% endif %}
+            </div>
             <button class="gray-button-inverted expand-button">v</button>
             <button class="gray-button shrink-button hidden-item">^</button>
         </div>
@@ -26,9 +29,7 @@
             {% if display_not_interested %}
                 <button class="rounded-button discard-fiction">Not interested</button>
             {% endif %}
-            {% if display_dont_show %}
-                <button class="rounded-button gray-button dont-show-fiction">Don't Show Again</button>
-            {% endif %}
+
         </div>
 
     </div>
