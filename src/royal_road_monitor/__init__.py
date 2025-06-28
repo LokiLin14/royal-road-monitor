@@ -6,6 +6,7 @@ __version__ = "0.0.1"
 
 import logging
 import os
+import sys
 from datetime import datetime
 
 from flask import Flask, render_template, redirect, url_for, request, make_response
@@ -19,7 +20,9 @@ from .royalroad.scraper import snapshot_url
 
 logging.basicConfig(
     format='[%(asctime)s] %(levelname)s in %(name)s: %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
+    datefmt='%Y-%m-%d %H:%M:%S',
+    level=logging.INFO,
+    handlers=[logging.StreamHandler(sys.stdout)]
 )
 
 app = Flask(__name__)
@@ -68,7 +71,7 @@ def index_fiction_page(url: str):
     app.logger.info(f"Indexing fiction page, url={url}")
     snapshots = snapshot_url(url)
     for snapshot in snapshots:
-        app.logger.debug(f"Snapshot {snapshot}")
+        app.logger.info(f"Snapshot {snapshot}")
         db_session.add(snapshot)
     db_session.commit()
 
