@@ -9,7 +9,7 @@ import os
 import sys
 from datetime import datetime
 
-from flask import Flask, render_template, redirect, url_for, request, make_response
+from flask import Flask, render_template, redirect, url_for, request, make_response, send_from_directory
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from wtforms import Form, BooleanField, StringField, validators
@@ -61,6 +61,10 @@ def dont_shows():
 @app.route("/watched_urls")
 def watched_urls():
     return render_template('watched_urls.html', watched_urls=queries.watched_urls(db_session))
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.svg', mimetype='image/svg+xml')
 
 class WatchedURLForm(Form):
     url = StringField('url', validators=[validators.DataRequired()])
