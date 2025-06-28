@@ -4,7 +4,7 @@ from typing import List, Tuple
 from sqlalchemy import func, and_
 from sqlalchemy.orm import aliased
 
-from new_in_rising_stars.royalroad.models import FictionSnapshot, WatchedURL, NotInterestedInFiction
+from ..royalroad.models import FictionSnapshot, WatchedURL, NotInterestedInFiction
 
 def all_fictions(db_session, max_entries_returned:int):
     query = db_session.query(
