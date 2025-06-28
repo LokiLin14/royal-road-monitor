@@ -5,17 +5,16 @@
 {% endblock %}
 
 {% block body %}
-    <div class="content-heading ">
+    <div class="content-heading">
         <div>
             <h1>Don't Shows</h1>
-            <p>Displays the history of marking fictions with don't show. Allows undoing a don't show.</p>
+            <p>Don't shows with an undo button.</p>
         </div>
-
     </div>
 
     <div class="content-body">
     {% for (dont_show, snapshot) in dont_shows %}
-        <div class="content-item dont-show-item">
+        <div class="content-item dont-show-item fiction-card"> {# shouldn't use fiction-card class but it looks nicer so oh well' #}
             <p>Marked <a href="{{ dont_show.url }}"><b>{{ snapshot.title }}</b></a> at {{ dont_show.marked_time.strftime("%Y-%m-%d %H:%M") }} </p>
             <button class="rounded-button gray-button undo-dont-show-fiction">Undo</button>
         </div>
