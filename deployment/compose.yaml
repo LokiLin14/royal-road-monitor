@@ -1,0 +1,34 @@
+services:
+  app:
+    image: ghcr.io/lokilin14/royal_road_monitor:latest
+    container_name: royal_road_monitor
+    networks:
+      - royal_road_monitor
+    restart: always
+    volumes:
+      - royal_road_monitor_db:/db
+    env_file: stack.env
+    ports:
+      - '5000:5000'
+
+  cron:
+    # To make this work, set FLASK_CRON_KEY in your .env file
+    image: alpine
+    container_name: royal_road_monitor_cron
+    restart: always
+    command: sh -c "
+      apk add tzdata
+      && ln -s /usr/share/zoneinfo/${TZ} /etc/localtime
+      && echo \"0 3 * * * wget -qO- http://app:8080/api/v1/cron/$FLASK_CRON_KEY;echo\" > /tmp/crontab_tmp 
+      && crontab /tmp/crontab_tmp
+      && crond -f -L /dev/stdout
+      && rm /tmp/crontab_tmp
+    networks:
+      - royal_road_monitor
+
+networks:
+  royal_road_monitor:
+    driver: bridge
+
+volumes:
+   royal_road_monitor_db:

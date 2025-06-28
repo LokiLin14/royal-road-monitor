@@ -24,11 +24,11 @@ logging.basicConfig(
 
 app = Flask(__name__)
 
-# app.config["CRON_KEY"] = SECRET_STRING          # Configures the string needed to call '/api/cron',
-                                                  # recommended to set it via the "FLASK_CRON_KEY" env variable
 app.config["NUM_ENTRIES_ON_NEW_PAGE"] = 50        # Configures the number of entries displayed in '/'
 app.config["NUM_ENTRIES_ON_DONT_SHOW_PAGE"] = 50  # Configures the number of entries displayed in '/dont_shows'
-app.config["DB_DIR"] = "./"
+app.config["CRON_KEY"] = "SECRET_STRING"          # Configures the string needed to call '/api/cron',
+                                                  # recommended to set it via the "FLASK_CRON_KEY" env variable
+app.config["DB_DIR"] = "./"                       # please set it to via the "FLASK_DB_DIR" env variable
 app.config.from_prefixed_env(prefix="FLASK")
 
 # Initialise the database
