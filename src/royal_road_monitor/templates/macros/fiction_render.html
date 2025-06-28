@@ -1,11 +1,17 @@
 {% macro display_fiction(fiction, display_follow=false, display_not_interested=false, display_dont_show=false) %}
-<div class="content-item">
+<div class="content-item fiction-card fiction-card-minimised">
     <img src="{{ fiction.cover_url }}" alt="fiction cover image">
 
     <div class="fiction-content">
-        <a href="{{ fiction.url }}">
-            <h2>{{ fiction.title }}</h2>
-        </a>
+
+        <div class="fiction-top-bar-div">
+            <a href="{{ fiction.url }}">
+                <h2>{{ fiction.title }}</h2>
+            </a>
+            <button class="gray-button-inverted expand-button">v</button>
+            <button class="gray-button shrink-button hidden-item">^</button>
+        </div>
+
 
         <p>Snapshot time: {{ fiction.snapshot_time.strftime("%Y-%m-%d %H:%M") }}</p>
 
@@ -24,7 +30,9 @@
                 <button class="rounded-button gray-button dont-show-fiction">Don't Show Again</button>
             {% endif %}
         </div>
+
     </div>
+    <div class="fade-overlay" id="fadeOverlay"></div>
 </div>
 {% endmacro %}
 

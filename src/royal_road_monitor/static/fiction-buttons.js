@@ -79,3 +79,19 @@ dontShowButtons.forEach(button => {
         }
     });
 });
+
+const expandButtons = document.querySelectorAll('.expand-button')
+expandButtons.forEach(button => {
+    button.addEventListener('click', function () {
+        const fictionItem = this.closest('.fiction-card');
+        fictionItem.classList.remove('fiction-card-minimised')
+    })
+})
+
+const shrinkButtons = document.querySelectorAll('.shrink-button')
+shrinkButtons.forEach(button => {
+    button.addEventListener('click', function () {
+        const fictionItem = this.closest('.fiction-card');
+        fictionItem.classList.add('fiction-card-minimised')
+    })
+})
