@@ -19,7 +19,7 @@ services:
     restart: always
     command: sh -c "
       apk add tzdata
-      && ln -s /usr/share/zoneinfo/${TZ} /etc/localtime
+      && ln -s -f /usr/share/zoneinfo/${TZ} /etc/localtime
       && echo \"0 */3 * * * wget -qO - http://app:5000/api/cron?cron_key=$FLASK_CRON_KEY\" > /tmp/crontab_tmp 
       && crontab /tmp/crontab_tmp
       && crond -f -L /dev/stdout
