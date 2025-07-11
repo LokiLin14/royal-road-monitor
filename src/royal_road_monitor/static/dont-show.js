@@ -1,9 +1,9 @@
 const delete_dont_show_url_endpoint = '/api/delete_dont_show'
 
-async function delete_dont_show(fiction_url) {
+async function delete_dont_show(fiction_id) {
     try {
         const form_data = new FormData();
-        form_data.append('url', fiction_url);
+        form_data.append('fiction_id', fiction_id);
         const response = await fetch(delete_dont_show_url_endpoint, {
             method: 'POST',
             body: form_data
@@ -24,7 +24,7 @@ const dontShowButtons = document.querySelectorAll('.undo-dont-show-fiction');
 dontShowButtons.forEach(button => {
     button.addEventListener('click', async function() {
         const dont_show_entry = this.closest('.content-item');
-        const link = dont_show_entry.querySelector('a').href;
+        const link = dont_show_entry.querySelector('.fiction-id').textContent;
         const success = await delete_dont_show(link);
         if (success) {
             dont_show_entry.style.display = 'None';

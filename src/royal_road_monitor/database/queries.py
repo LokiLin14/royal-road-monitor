@@ -19,20 +19,20 @@ def all_fictions(db_session, max_entries_returned:int):
 def new_fictions(db_session, max_entries_returned : int, from_url : str="") -> list[type[FictionSnapshot]]:
     # Filter for only snapshots in the url and number the snapshots by their creation time
     first_appearances = db_session.query(
-        FictionSnapshot.url,
+        FictionSnapshot.fiction_id,
         func.min(FictionSnapshot.snapshot_time).label('snapshot_time'),
     ).filter(
         FictionSnapshot.from_url == from_url,
-        FictionSnapshot.url.not_in(db_session.query(NotInterestedInFiction.url))
+        FictionSnapshot.fiction_id.not_in(db_session.query(NotInterestedInFiction.fiction_id))
     ).group_by(
-        FictionSnapshot.url,
+        FictionSnapshot.fiction_id,
     ).subquery()
     first_snapshots = db_session.query(
         FictionSnapshot,
     ).join(
         first_appearances,
         and_(
-            FictionSnapshot.url == first_appearances.c.url,
+            FictionSnapshot.fiction_id == first_appearances.c.fiction_id,
             FictionSnapshot.snapshot_time == first_appearances.c.snapshot_time,
         )
     ).order_by(
@@ -43,17 +43,17 @@ def new_fictions(db_session, max_entries_returned : int, from_url : str="") -> l
 
 def dont_show_fictions(db_session, max_entries_returned:int=100) -> List[Tuple[NotInterestedInFiction, FictionSnapshot]]:
     first_appearances = db_session.query(
-        FictionSnapshot.url,
+        FictionSnapshot.fiction_id,
         func.min(FictionSnapshot.snapshot_time).label('snapshot_time'),
     ).group_by(
-        FictionSnapshot.url,
+        FictionSnapshot.fiction_id,
     ).subquery()
     first_snapshots = db_session.query(
         FictionSnapshot,
     ).join(
         first_appearances,
         and_(
-            FictionSnapshot.url == first_appearances.c.url,
+            FictionSnapshot.fiction_id == first_appearances.c.fiction_id,
             FictionSnapshot.snapshot_time == first_appearances.c.snapshot_time,
         )
     ).subquery()
@@ -62,10 +62,10 @@ def dont_show_fictions(db_session, max_entries_returned:int=100) -> List[Tuple[N
         aliased(FictionSnapshot, first_snapshots),
     ).join(
         first_snapshots,
-        NotInterestedInFiction.url == first_snapshots.c.url,
+        NotInterestedInFiction.fiction_id == first_snapshots.c.fiction_id,
         full=True
     ).filter(
-        NotInterestedInFiction.url.is_not(None)
+        NotInterestedInFiction.fiction_id.is_not(None)
     ).order_by(
         NotInterestedInFiction.marked_time.desc(),
     ).limit(max_entries_returned)
@@ -82,11 +82,12 @@ def add_data(db_session):
     db_session.query(NotInterestedInFiction).delete()
     snapshot = FictionSnapshot(
         snapshot_time = datetime.now(),
-        url = "test0",
+        fiction_id = "test0",
+        url="",
         cover_url = "",
         title = "test0",
         description = "",
-        tags = "",
+        tags = [],
         pages = 0,
         chapters = 0,
         rating = 4.5,
@@ -95,11 +96,12 @@ def add_data(db_session):
     )
     snapshot1 = FictionSnapshot(
         snapshot_time=datetime.now(),
-        url="test1",
+        fiction_id = "test1",
+        url="",
         cover_url="",
         title="test1",
         description="",
-        tags="",
+        tags = [],
         pages=0,
         chapters=0,
         rating=4.5,
@@ -108,11 +110,12 @@ def add_data(db_session):
     )
     snapshot2 = FictionSnapshot(
         snapshot_time = datetime.now(),
-        url = "test0",
+        fiction_id = "test0",
+        url="",
         cover_url = "",
         title = "test0",
         description = "",
-        tags = "",
+        tags = [],
         pages = 0,
         chapters = 0,
         rating = 4.5,
@@ -123,7 +126,7 @@ def add_data(db_session):
     db_session.add(snapshot1)
     db_session.add(snapshot2)
     not_interested = NotInterestedInFiction(
-        url = "test0",
+        fiction_id = "test0",
         marked_time = datetime.now(),
     )
     db_session.add(not_interested)

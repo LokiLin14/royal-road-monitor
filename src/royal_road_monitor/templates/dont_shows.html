@@ -15,7 +15,8 @@
     <div class="content-body">
     {% for (dont_show, snapshot) in dont_shows %}
         <div class="content-item dont-show-item fiction-card"> {# shouldn't use fiction-card class but it looks nicer so oh well' #}
-            <p>Marked <a href="{{ dont_show.url }}"><b>{{ snapshot.title }}</b></a> at {{ dont_show.marked_time.strftime("%Y-%m-%d %H:%M") }} </p>
+            <div class="hidden-item fiction-id">{{ dont_show.fiction_id }}</div>
+            <p>Marked <a href="{{ snapshot.url }}"><b>{{ snapshot.title }}</b></a> at {{ dont_show.marked_time.strftime("%Y-%m-%d %H:%M") }} </p>
             <button class="rounded-button gray-button undo-dont-show-fiction">Undo</button>
         </div>
     {% endfor %}

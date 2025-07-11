@@ -36,6 +36,7 @@ def snapshot_fiction(fiction : Tag, snapshot_time : datetime, from_url : str, ra
             rating = float(maybeStars['title'])
         return FictionSnapshot(
             snapshot_time = snapshot_time,
+            fiction_id=fiction.find('h2', class_='fiction-title').find('a')['href'].split('/')[2],
             url = baseurl + fiction.find('h2', class_='fiction-title').find('a')['href'],
             cover_url = fiction.find('img')['src'],
             title = fiction.find('h2', class_='fiction-title').text.strip(),
@@ -92,7 +93,7 @@ def download_rising_stars(path):
         f.write(req.text)
 
 def check_on_download():
-    test_file = '../../../test/rising-stars.html'
+    test_file = '../test/rising-stars.html'
     if not os.path.exists(test_file):
         print("Downloading rising stars...")
         download_rising_stars(test_file)

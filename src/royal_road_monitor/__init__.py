@@ -120,15 +120,15 @@ def create_watched_url():
     return redirect(url_for('watched_urls'))
 
 class DontShowFictionForm(Form):
-    url = StringField('URL', validators=[validators.DataRequired(), validators.Length(max=200)])
+    fiction_id = StringField('fiction_id', validators=[validators.DataRequired(), validators.Length(max=200)])
 
 @app.route('/api/dont_show_again', methods=['POST'])
 def dont_show_again():
     form = DontShowFictionForm(request.form)
     if not form.validate():
         return make_response({'message': form.errors}, 400)
-    app.logger.info(f'Marking fiction as dont show again, url={form.url.data}')
-    db_session.add(NotInterestedInFiction(url=form.url.data, marked_time=datetime.now()))
+    app.logger.info(f'Marking fiction as dont show again, fiction_id={form.fiction_id.data}')
+    db_session.add(NotInterestedInFiction(fiction_id=form.fiction_id.data, marked_time=datetime.now()))
     db_session.commit()
     return make_response({'message': f'Marked fiction as dont show'}, 200)
 
@@ -137,8 +137,8 @@ def delete_dont_show():
     form = DontShowFictionForm(request.form)
     if not form.validate():
         return make_response({'message': form.errors}, 400)
-    app.logger.info(f'Removing dont show mark from fiction, url={form.url.data}')
-    db_session.query(NotInterestedInFiction).filter(NotInterestedInFiction.url == form.url.data).delete()
+    app.logger.info(f'Removing dont show mark from fiction, url={form.fiction_id.data}')
+    db_session.query(NotInterestedInFiction).filter(NotInterestedInFiction.fiction_id == form.fiction_id.data).delete()
     db_session.commit()
     return make_response({'message': f'Removed dont show'}, 200)
 
