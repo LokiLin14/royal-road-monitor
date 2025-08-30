@@ -36,7 +36,7 @@ cd royal-road-monitor
 
 # Create a virtual environment to not mess up the global environment
 python -m venv .venv
-source ./venv/bin/activate 
+source ./.venv/bin/activate 
 
 # Install packages and run the application 
 pip install -e . 

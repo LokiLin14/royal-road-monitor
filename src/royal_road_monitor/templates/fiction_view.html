@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% from "macros/fiction_render.html" import display_fiction %}
+
+{% block title %}
+    {{ latest_snapshot.title }}
+{% endblock %}
+
+{% block body %}
+    <div class="content-heading">
+        <div>
+            <h1>Fiction History</h1>
+            <p>Graphs of fiction rank on watched urls.</p>
+        </div>
+    </div>
+
+    <div class="content-body">
+        {{ display_fiction(latest_snapshot, false, false, false, false) }}
+
+        <div class="content-item fiction-card {% if default_hidden %} fiction-card-minimised {% endif %}">
+            <div class="fiction-content">
+                <div class="fiction-top-bar-div">
+                    <div>
+                        <h2>Ranking over time</h2>
+                    </div>
+                </div>
+                <div class="chart-container" style="position: relative; height:60vh; width:100%">
+                    <canvas id="chart" style="width: 100%; height: 100%"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <script src="{{ url_for("static", filename="graph.js") }}"></script>
+
+        <script>
+            const data = JSON.parse({{per_url_snapshots_json|tojson}});
+            let dec = 0;
+            data.forEach(item => {
+                item.snapshots.forEach(snapshot => {
+                    snapshot.time = new Date(snapshot.time);
+                });
+            });
+            const graph = new RankTimeGraphAlt('chart', data);
+        </script>
+    </div>
+
+{% endblock %}

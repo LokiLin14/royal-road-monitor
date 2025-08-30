@@ -4,17 +4,21 @@ It can be configured to track Rising Stars, Ongoing Fictions, Top Rated, etc.
 """
 __version__ = "0.0.1"
 
+import json
 import logging
 import os
 import sys
 from datetime import datetime
+from typing import List, Tuple
 
-from flask import Flask, render_template, redirect, url_for, request, make_response, send_from_directory
+from flask import Flask, abort, render_template, redirect, url_for, request, make_response, send_from_directory
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from wtforms import Form, BooleanField, StringField, validators
+from wtforms.fields.numeric import IntegerField
 
 from .database import init_db, queries
+from .royalroad import FictionSnapshot
 from .royalroad.models import WatchedURL, NotInterestedInFiction
 from .royalroad.scraper import snapshot_url
 
@@ -65,6 +69,44 @@ def watched_urls():
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.svg', mimetype='image/svg+xml')
+
+class FictionViewForm(Form):
+    fiction_id = IntegerField('fiction_id', [validators.DataRequired()])
+
+def json_dump(data : List[Tuple[WatchedURL, List[FictionSnapshot]]]) -> str:
+    result_data = []
+    for watched_url, snapshots in data:
+        snapshots = [
+            { 'rank': snapshot.from_ranking, 'time': snapshot.snapshot_time.isoformat() }
+             for snapshot in snapshots
+        ]
+        result_data.append({
+            'name': watched_url.alias,
+            'snapshots': snapshots
+        })
+    return json.dumps(result_data   )
+
+@app.route('/fiction')
+def fiction_view():
+    form = FictionViewForm(request.args)
+    if not form.validate():
+        return make_response({'message': form.errors}, 400)
+    latest_snapshot = queries.latest_snapshot(db_session, fiction_id=form.fiction_id.data)
+    if latest_snapshot is None:
+        return make_response({'message': f'fiction of id {form.fiction_id.data} not found'}, 400)
+    per_url_snapshots = []
+    for watched_url in queries.watched_urls(db_session):
+        per_url_snapshots.append((
+            watched_url,
+            queries.snapshots_of_fiction(db_session, form.fiction_id.data, watched_url.url)
+        ))
+    logging.info(f'per_url_snapshots: {per_url_snapshots}')
+    return render_template(
+        'fiction_view.html',
+        latest_snapshot=latest_snapshot,
+        per_url_snapshots=per_url_snapshots,
+        per_url_snapshots_json=json_dump(per_url_snapshots)
+    )
 
 class WatchedURLForm(Form):
     url = StringField('url', validators=[validators.DataRequired()])

@@ -1,5 +1,5 @@
-{% macro display_fiction(fiction, display_follow=false, display_not_interested=false, display_dont_show=false) %}
-<div class="content-item fiction-card fiction-card-minimised">
+{% macro display_fiction(fiction, display_follow=false, display_not_interested=false, display_dont_show=false, default_hidden=true) %}
+<div class="content-item fiction-card {% if default_hidden %} fiction-card-minimised {% endif %}">
     <img src="{{ fiction.cover_url }}" alt="fiction cover image">
 
     <div class="fiction-content">
@@ -11,6 +11,11 @@
                 <a href="{{ fiction.url }}"><h2>{{ fiction.title }}</h2></a>
                 {% if display_dont_show %}
                     <button class="rounded-button gray-button dont-show-fiction">Don't Show Again</button>
+                {% endif %}
+                {% if default_hidden %}
+                <a href="/fiction?fiction_id={{ fiction.fiction_id }}">
+                    <img src="{{url_for('static', filename='magnify.svg')}}" class="magnify-img">
+                </a>
                 {% endif %}
             </div>
             <button class="gray-button-inverted expand-button">v</button>
@@ -42,7 +47,7 @@
 {% macro display_fictions(fictions, display_follow=false, display_not_interested=false, display_dont_show=false) %}
     <div class="content-body">
     {% for fiction in fictions %}
-        {{ display_fiction(fiction, display_follow, display_not_interested, display_dont_show) }}
+        {{ display_fiction(fiction, display_follow, display_not_interested, display_dont_show, true) }}
     {% endfor %}
     </div>
     <script src="{{ url_for('static', filename='fiction-buttons.js') }}"></script>

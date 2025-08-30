@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from sqlalchemy import func, and_
 from sqlalchemy.orm import aliased
@@ -16,7 +16,7 @@ def all_fictions(db_session, max_entries_returned:int):
     return query.all()
 
 # Returns a list of fiction snapshots not in the not_interested table ordered by their first time they were seen
-def new_fictions(db_session, max_entries_returned : int, from_url : str="") -> list[type[FictionSnapshot]]:
+def new_fictions(db_session, max_entries_returned : int=100, from_url : str="") -> list[type[FictionSnapshot]]:
     # Filter for only snapshots in the url and number the snapshots by their creation time
     first_appearances = db_session.query(
         FictionSnapshot.fiction_id,
@@ -71,76 +71,29 @@ def dont_show_fictions(db_session, max_entries_returned:int=100) -> List[Tuple[N
     ).limit(max_entries_returned)
     return query.all()
 
-def watched_urls(db_session) -> list[type[WatchedURL]]:
+def watched_urls(db_session) -> List[type[WatchedURL]]:
     return db_session.query(WatchedURL).all()
 
-# Below is code for development
-
-def add_data(db_session):
-    db_session.query(FictionSnapshot).delete()
-    db_session.query(WatchedURL).delete()
-    db_session.query(NotInterestedInFiction).delete()
-    snapshot = FictionSnapshot(
-        snapshot_time = datetime.now(),
-        fiction_id = "test0",
-        url="",
-        cover_url = "",
-        title = "test0",
-        description = "",
-        tags = [],
-        pages = 0,
-        chapters = 0,
-        rating = 4.5,
-        from_url="",
-        from_ranking = 0
+def snapshots_of_fiction(db_session, fiction_id, from_url) -> List[FictionSnapshot]:
+    query = db_session.query( 
+        FictionSnapshot
+    ).filter(
+        FictionSnapshot.fiction_id == fiction_id,
+        FictionSnapshot.from_url == from_url
+    ).order_by(
+        FictionSnapshot.snapshot_time.asc()
     )
-    snapshot1 = FictionSnapshot(
-        snapshot_time=datetime.now(),
-        fiction_id = "test1",
-        url="",
-        cover_url="",
-        title="test1",
-        description="",
-        tags = [],
-        pages=0,
-        chapters=0,
-        rating=4.5,
-        from_url="",
-        from_ranking=0
-    )
-    snapshot2 = FictionSnapshot(
-        snapshot_time = datetime.now(),
-        fiction_id = "test0",
-        url="",
-        cover_url = "",
-        title = "test0",
-        description = "",
-        tags = [],
-        pages = 0,
-        chapters = 0,
-        rating = 4.5,
-        from_url="",
-        from_ranking = 0
-    )
-    db_session.add(snapshot)
-    db_session.add(snapshot1)
-    db_session.add(snapshot2)
-    not_interested = NotInterestedInFiction(
-        fiction_id = "test0",
-        marked_time = datetime.now(),
-    )
-    db_session.add(not_interested)
-    db_session.commit()
+    return query.all()
 
-if __name__ == '__main__':
-    init_db()
-
-    add_data()
-
-    new_fics = all_fictions(10);
-    print(new_fics)
-
-    dont_shows = dont_show_fictions(10)
-    print(dont_shows)
-
-
+def latest_snapshot(db_session, fiction_id) -> Optional[FictionSnapshot]:
+    snapshots = db_session.query(
+        FictionSnapshot
+    ).filter(
+        FictionSnapshot.fiction_id == fiction_id
+    ).order_by(
+        FictionSnapshot.snapshot_time.desc()
+    ).limit(1).all()
+    if len(snapshots) == 0:
+        return None
+    else:
+        return snapshots[0]

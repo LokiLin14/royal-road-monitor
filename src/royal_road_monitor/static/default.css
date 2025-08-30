@@ -124,6 +124,22 @@
         flex-shrink: 0;
     }
 
+    .magnify-img {
+        vertical-align: middle;
+        width: 1.5em;
+        height: 1.5em;
+        box-shadow: none;
+        background: transparent;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        padding: 0.2em;
+    }
+
+    .magnify-img:hover {
+        background: #e8e8e8;
+        border-color: #999;
+    }
+
     .content-item p:empty {
         display: none;
     }
@@ -157,6 +173,7 @@
         div {
             display: flex;
             flex-direction: row;
+            align-items: center;
         }
     }
 }
